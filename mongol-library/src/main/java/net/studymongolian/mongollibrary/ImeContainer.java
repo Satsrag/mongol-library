@@ -5,8 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.ColorUtils;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -16,6 +14,9 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
@@ -430,6 +431,13 @@ public class ImeContainer extends ViewGroup
             mCandidatesView.clearCandidates();
         }
 
+    }
+
+    public void setImeOptions(int imeOptions) {
+        if (mKeyboards == null) return;
+        for (Keyboard keyboard : mKeyboards) {
+            keyboard.setImeOptions(imeOptions);
+        }
     }
 
     /**

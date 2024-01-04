@@ -299,4 +299,10 @@ public class KeyboardNavigation extends Keyboard {
     public int getDefaultHeight() {
         return (int) (DEFAULT_HEIGHT_DP * getResources().getDisplayMetrics().density);
     }
+
+    @Override
+    public void setImeOptions(int options) {
+        super.setImeOptions(options);
+        mKeyReturn.setImage(getReturnImage(), getPrimaryTextColor());
+    }
 }

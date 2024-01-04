@@ -1106,4 +1106,10 @@ public class KeyboardAeiou extends Keyboard {
         }
         super.onKeyInput(text);
     }
+
+    @Override
+    public void setImeOptions(int options) {
+        super.setImeOptions(options);
+        mKeyReturn.setImage(getReturnImage(), getPrimaryTextColor());
+    }
 }

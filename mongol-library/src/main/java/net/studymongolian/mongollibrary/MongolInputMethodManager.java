@@ -231,6 +231,7 @@ public class MongolInputMethodManager implements MongolEditText.OnMongolEditText
             mCurrentEditorInfo = tba;
             if (mImeContainer != null) {
                 mImeContainer.setInputConnection(ic);
+                mImeContainer.setImeOptions(tba.imeOptions);
                 mImeContainer.onStartInput(tba, false);
             }
         }

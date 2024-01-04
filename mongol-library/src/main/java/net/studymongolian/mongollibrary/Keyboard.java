@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
@@ -56,6 +57,7 @@ public abstract class Keyboard extends ViewGroup implements Key.KeyListener {
 
     private PopupKeyCandidatesView popupView;
     private PopupWindow popupWindow;
+    private int imeOptions = EditorInfo.IME_ACTION_UNSPECIFIED;
 
     public enum CandidatesLocation {
         // WARNING: these values are also defined in attrs.xml
@@ -139,7 +141,7 @@ public abstract class Keyboard extends ViewGroup implements Key.KeyListener {
         String fontFile = a.getString(R.styleable.Keyboard_fontAssetFile);
         mTypeface = MongolFont.get(fontFile, context);
         if (mTypeface == null) mTypeface = MongolFont.get(MongolFont.QAGAN, context);
-        mPrimaryTextSizePx =  a.getDimensionPixelSize(R.styleable.Keyboard_primaryTextSize,
+        mPrimaryTextSizePx = a.getDimensionPixelSize(R.styleable.Keyboard_primaryTextSize,
                 getDefaultPrimaryTextSizeInPixels());
         mPrimaryTextColor = a.getColor(R.styleable.Keyboard_primaryTextColor,
                 DEFAULT_PRIMARY_TEXT_COLOR);
@@ -181,13 +183,21 @@ public abstract class Keyboard extends ViewGroup implements Key.KeyListener {
 
     public interface OnKeyboardListener {
         List<PopupKeyCandidate> getAllKeyboardNames();
+
         void onRequestNewKeyboard(String keyboardDisplayName);
+
         void onFinished(View caller);
+
         void onKeyboardInput(String text);
+
         void onKeyPopupChosen(PopupKeyCandidate popupKeyCandidate);
+
         void onBackspace();
+
         CharSequence getTextBeforeCursor(int numberOfChars);
+
         CharSequence getTextAfterCursor(int numberOfChars);
+
         String getPreviousMongolWord(boolean allowSingleSpaceBeforeCursor);
     }
 
@@ -295,7 +305,12 @@ public abstract class Keyboard extends ViewGroup implements Key.KeyListener {
     }
 
     protected Bitmap getReturnImage() {
-        int imageResourceId = R.drawable.ic_keyboard_return_32dp;
+        int imageResourceId;
+        if (imeOptions == EditorInfo.IME_ACTION_SEARCH) {
+            imageResourceId = R.drawable.outline_search_black_24;
+        } else {
+            imageResourceId = R.drawable.ic_keyboard_return_32dp;
+        }
         return BitmapFactory.decodeResource(getResources(), imageResourceId);
     }
 
@@ -401,6 +416,10 @@ public abstract class Keyboard extends ViewGroup implements Key.KeyListener {
     // subclasses should return the default name of the keyboard to display in the
     // keyboard chooser popup
     abstract public String getDisplayName();
+
+    public void setImeOptions(int options) {
+        imeOptions = options;
+    }
 
     public void setCandidatesLocation(CandidatesLocation location) {
         mCandidatesLocation = location;

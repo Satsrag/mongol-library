@@ -841,4 +841,10 @@ public class KeyboardCyrillic extends Keyboard {
             makeKeysLowercase();
         }
     }
+
+    @Override
+    public void setImeOptions(int options) {
+        super.setImeOptions(options);
+        mKeyReturn.setImage(getReturnImage(), getPrimaryTextColor());
+    }
 }

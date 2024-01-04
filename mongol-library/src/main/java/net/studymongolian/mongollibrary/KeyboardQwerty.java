@@ -639,6 +639,12 @@ public class KeyboardQwerty extends Keyboard {
         return null;
     }
 
+    @Override
+    public void setImeOptions(int options) {
+        super.setImeOptions(options);
+        mKeyReturn.setImage(getReturnImage(), getPrimaryTextColor());
+    }
+
     private List<PopupKeyCandidate> getCandidatesForQ() {
         List<PopupKeyCandidate> candidates = new ArrayList<>();
         if (mIsShowingPunctuation) {
