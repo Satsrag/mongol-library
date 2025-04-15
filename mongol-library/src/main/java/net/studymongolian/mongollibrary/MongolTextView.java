@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import androidx.annotation.ColorInt;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.method.MovementMethod;
@@ -19,12 +18,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.ColorInt;
+
 // TODO how to speed this up
 // use array instead of mLinesInfo list
 // only re-render changed words
 // only redraw changed lines
 
-public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawListener {
+public class MongolTextView extends View implements ViewTreeObserver.OnPreDrawListener {
 
     private final static int DEFAULT_FONT_SIZE_SP = 20;
     private static final int STICKY_WIDTH_UNDEFINED = -1;
@@ -232,7 +233,7 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     private void clearOnMeasureData() {
-        for (int i=0; i<mOnMeasureData.length; i++)
+        for (int i = 0; i < mOnMeasureData.length; i++)
             mOnMeasureData[i] = 0;
     }
 
@@ -303,7 +304,11 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
      * @param size in SP units
      */
     public void setTextSize(float size) {
-        mTextSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+    }
+
+    public void setTextSize(int unit, float size) {
+        mTextSizePx = TypedValue.applyDimension(unit,
                 size, getResources().getDisplayMetrics());
         mTextPaint.setTextSize(mTextSizePx);
         mLayout.reflowLines();
@@ -336,7 +341,6 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *
      * @return the text stroke width in px units
      */
     @SuppressWarnings("unused")
@@ -357,7 +361,6 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *
      * @return the color of the stroke border outline around the text characters
      */
     @SuppressWarnings("unused")
@@ -370,9 +373,9 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
      * Set the color to Color.TRANSPARENT to disable shadow
      *
      * @param radius the blur radius of the shadow
-     * @param dx the x offset
-     * @param dy the y offset
-     * @param color of the shadow
+     * @param dx     the x offset
+     * @param dy     the y offset
+     * @param color  of the shadow
      */
     public void setShadowLayer(float radius, float dx, float dy, int color) {
         mTextPaint.setShadowLayer(radius, dx, dy, color);
@@ -386,7 +389,6 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *
      * @return the blur radius of the text shadow
      */
     public float getShadowRadius() {
@@ -394,7 +396,6 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *
      * @return the x offset of the text shadow
      */
     public float getShadowDx() {
@@ -402,7 +403,6 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *
      * @return the y offset of the text shadow
      */
     public float getShadowDy() {
@@ -410,7 +410,6 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *
      * @return the color of the text shadow
      */
     @ColorInt
@@ -421,7 +420,7 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     /**
      * This adds spacing to each line of text
      *
-     * @param add the extra spacing to add between lines of text (default is 0)
+     * @param add  the extra spacing to add between lines of text (default is 0)
      * @param mult how much to multiply each line by in order to change the overall spacing (default is 1)
      */
     public void setLineSpacing(float add, float mult) {
@@ -439,7 +438,6 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *
      * @return any extra spacing added to text lines (default is 0)
      */
     public float getLineSpacingExtra() {
@@ -447,7 +445,6 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *
      * @return the multiplier that is used to change line spacing (default is 1)
      */
     public float getLineSpacingMultiplier() {
@@ -457,7 +454,7 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     /**
      * This is the width of a vertical text line, comparable to TextView.getLineHeight() for
      * horizontal text.
-     *
+     * <p>
      * Any extra spacing or spacing multipliers are taken into account.
      *
      * @return the width of one line of vertical text
@@ -466,7 +463,7 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
         return Math.round(mTextPaint.getFontMetricsInt(null) * mSpacingMult + mSpacingAdd);
     }
 
-    public void setPadding (int left, int top, int right, int bottom) {
+    public void setPadding(int left, int top, int right, int bottom) {
         super.setPadding(left, top, right, bottom);
         if (mLayout == null) return;
         mLayout.reflowLines();
@@ -480,9 +477,9 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
     }
 
     /**
-     *  This sets a custom gravity attribute but uses the same values as Android gravity.
-     *  The gravity values are used as integers and not flags. Thus, combining two
-     *  flags with | will not work.
+     * This sets a custom gravity attribute but uses the same values as Android gravity.
+     * The gravity values are used as integers and not flags. Thus, combining two
+     * flags with | will not work.
      *
      * @param gravity Choices are Gravity.TOP (default), Gravity.CENTER_HORIZONTAL, and Gravity.BOTTOM
      */
@@ -494,7 +491,7 @@ public class MongolTextView extends View  implements ViewTreeObserver.OnPreDrawL
         }
     }
 
-    public int getOffsetForPosition (float x, float y) {
+    public int getOffsetForPosition(float x, float y) {
         if (getLayout() == null) return -1;
         final int line = getLineAtCoordinate(x); // vertical line
         return getOffsetAtCoordinate(line, y);
