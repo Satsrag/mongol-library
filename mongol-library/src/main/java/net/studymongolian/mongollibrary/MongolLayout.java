@@ -128,10 +128,10 @@ public class MongolLayout {
 
         if (needsLineUpdate) updateLines();
 
-        int metricsBottom = mTextPaint.getFontMetricsInt().bottom;
+        float metricsBottom = mTextPaint.getFontMetricsInt().bottom;
 
-        int x = metricsBottom; // start position of each vertical line
-        int y = 0; // baseline
+        float x = metricsBottom; // start position of each vertical line
+        float y = 0; // baseline
         MongolTextLine tl = MongolTextLine.obtain();
 
         boolean needMultiply = (mSpacingMult != 1 || mSpacingAdd != 0);

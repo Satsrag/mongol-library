@@ -227,7 +227,7 @@ class MongolTextLine {
      * @param y      the baseline
      * @param bottom the bottom of the line
      */
-    void draw(Canvas c, float x, float top, float y, int bottom) {
+    void draw(Canvas c, float x, float top, float y, float bottom) {
 
         // (x, y) are the start coordinates of each vertical line
         // where x is the top of the line and y is the baseline running down.
@@ -259,7 +259,7 @@ class MongolTextLine {
                 wp = mPaint;
             }
 
-            float width = (run.isRotated) ? run.measuredHeight : wp.measureText(mText, start, end);
+            float width = wp.measureText(mText, start, end);
 
             // background color
             if (wp.bgColor != 0) {
@@ -283,7 +283,7 @@ class MongolTextLine {
 
             // text stroke
             if (wp.hasStroke()) {
-                drawTextStroke(c, run, bottom, width, start, end, wp);
+                drawTextStroke(c, run, width, start, end, wp);
             }
 
             // "underline" (to the right of vertical text)
@@ -298,7 +298,7 @@ class MongolTextLine {
             }
 
             // text
-            drawTextRun(c, run, bottom, width, start, end, wp);
+            drawTextRun(c, run, width, start, end, wp);
 
             // move into position for next text run
             c.translate(width, 0);
@@ -307,8 +307,7 @@ class MongolTextLine {
         c.restore();
     }
 
-    private void drawTextStroke(Canvas c, TextRun run,
-                                int bottom, float width, int start, int end, TextPaintPlus wp) {
+    private void drawTextStroke(Canvas c, TextRun run, float width, int start, int end, TextPaintPlus wp) {
         int previousColor = wp.getColor();
         Paint.Style previousStyle = wp.getStyle();
 
@@ -319,7 +318,7 @@ class MongolTextLine {
         else
             wp.setStyle(Paint.Style.STROKE);
 
-        drawTextRun(c, run, bottom, width, start, end, wp);
+        drawTextRun(c, run, width, start, end, wp);
 
         wp.setStyle(previousStyle);
         wp.setColor(previousColor);
@@ -333,16 +332,15 @@ class MongolTextLine {
         wp.clearShadowLayer();
     }
 
-    private void drawTextRun(Canvas c, TextRun run,
-                             int bottom, float width, int start, int end, TextPaintPlus wp) {
+    private void drawTextRun(Canvas c, TextRun run, float width, int start, int end, TextPaintPlus wp) {
+        Paint.FontMetrics fm = wp.getFontMetrics();
         if (run.isRotated) {
             c.save();
             c.rotate(-90);
-            c.translate(-bottom, width - bottom);
-            c.drawText(mText, start, end, -wp.baselineShift, 0, wp);
+            c.drawText(mText, start, end, -(width + fm.top + fm.bottom) / 2 - wp.baselineShift, -fm.top, wp);
             c.restore();
         } else {
-            c.drawText(mText, start, end, 0, wp.baselineShift, wp);
+            c.drawText(mText, start, end, 0, (fm.top + fm.bottom - fm.ascent) / 2 + wp.baselineShift, wp);
         }
     }
 
@@ -352,14 +350,8 @@ class MongolTextLine {
         float maxHeight = 0;
 
         for (TextRun run : mTextRuns) {
-            if (run.isRotated) {
-                //noinspection SuspiciousNameCombination
-                widthSum += run.measuredHeight;
-                maxHeight = Math.max(maxHeight, run.measuredWidth);
-            } else {
-                widthSum += run.measuredWidth;
-                maxHeight = Math.max(maxHeight, run.measuredHeight);
-            }
+            widthSum += run.measuredWidth;
+            maxHeight = Math.max(maxHeight, run.measuredHeight);
         }
 
         // left, top, right, bottom (for horizontal line orientation)
